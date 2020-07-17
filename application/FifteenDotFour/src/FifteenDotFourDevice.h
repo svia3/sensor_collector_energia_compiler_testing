@@ -1,4 +1,4 @@
-c#ifndef FifteenDotFourDevice_h
+#ifndef FifteenDotFourDevice_h
 #define FifteenDotFourDevice_h
 
 #include <stdint.h>
