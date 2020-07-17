@@ -11,6 +11,7 @@
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROJECT.sensor.ccxml.Texas Instruments XDS110 USB Debug Probe/Cortex_M4_0" value="sensor_collector_energia_ti_compiler_test"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_TARGET_CONFIG" value="${target_config_active_default:sensor_collector_energia_ti_compiler_test}"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.collector.ccxml.Texas Instruments XDS110 USB Debug Probe/Cortex_M4_0" value="C:\Users\a0488612\workspace_v10\sensor_collector_energia_ti_compiler_testing\sensor_collector_energia_ti_compiler_testing\Release\sensor_collector_energia_ti_compiler_test.out"/>
+<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.sensor.ccxml.Texas Instruments XDS110 USB Debug Probe/Cortex_M4_0" value="C:\Users\a0488612\workspace_v10\sensor_collector_energia_ti_compiler_testing\sensor_collector_energia_ti_compiler_testing\Release\sensor_collector_energia_ti_compiler_test.out"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/sensor_collector_energia_ti_compiler_test"/>
 </listAttribute>

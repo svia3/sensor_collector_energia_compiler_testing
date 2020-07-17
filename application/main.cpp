@@ -30,18 +30,18 @@ extern void Board_init(void);
 #define SPANID 0xFFFF
 #define CPANID 0X0001
 
-#define COLLECTOR 1
+//#define COLLECTOR 1       /* Comment out when switching between boards */
 
 #ifdef COLLECTOR
 FifteenDotFourCollector myNode;
 #else
-FifteenDotFour myNode;
+FifteenDotFourDevice myNode;
 #endif
 
 void appTaskFxn(UArg a0, UArg a1)
 {
-    uint32_t now;
-    uint32_t then;
+//    uint32_t now;
+//    uint32_t then;
 
     /* Get the baked-in primary IEEE Address */
     memcpy(ApiMac_extAddr, (uint8_t *)(FCFG1_BASE + EXTADDR_OFFSET),

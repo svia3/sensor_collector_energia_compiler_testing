@@ -63,7 +63,6 @@ FifteenDotFourCollector::FifteenDotFourCollector(void) : FifteenDotFour(false)
      */
     _this = this;
     panID = 0x0001;
-//    FifteenDotFour::FifteenDotFour(false);
 }
 
 void FifteenDotFourCollector::begin(void)

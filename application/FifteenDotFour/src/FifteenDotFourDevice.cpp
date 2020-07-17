@@ -56,7 +56,7 @@ static ApiMac_callbacks_t Sensor_macCallbacks =
     };
 }
 
-FifteenDotFourDevice::FifteenDotFourDevice()
+FifteenDotFourDevice::FifteenDotFourDevice() : FifteenDotFour(true)
 {
     /*
      * Assign global class ptr to this instance.
@@ -65,6 +65,19 @@ FifteenDotFourDevice::FifteenDotFourDevice()
      */
     _this = this;
 }
+
+/*--------------------------------------------------------------------*/
+/* These methods should be aggregated into FifteenDotFour parent class once
+ * we figure out what can be consolidated
+ */
+bool FifteenDotFourDevice::beginTransmission() {
+    return false;
+}
+
+bool FifteenDotFourDevice::endTransmission() {
+    return false;
+}
+/*--------------------------------------------------------------------*/
 
 void FifteenDotFourDevice::begin(bool autoJoin)
 {
@@ -75,7 +88,7 @@ void FifteenDotFourDevice::begin(bool autoJoin)
     macUserCfg_t macUser0Cfg[] = MAC_USER_CFG;
 
     macUser0Cfg[0].pAssertFP = assertHandler;
-//    macUser0Cfg[0].ff = false;
+    macUser0Cfg[0].ff = false;
 
     Task_disable();
     _macTaskId = macTaskInit(macUser0Cfg);
@@ -205,10 +218,8 @@ void FifteenDotFourDevice::process(void)
 }
 
 void FifteenDotFourDevice::pollCnfCb(ApiMac_mlmePollCnf_t *pData) {
-    if((pData->status == ApiMac_status_noData) ||
-       (pData->status == ApiMac_status_success))
-    {
-
+    if((pData->status == ApiMac_status_noData) || (pData->status == ApiMac_status_success)) {
+        _this->revents = IDLE_EVENT;
     }
 }
 /*
@@ -216,6 +227,21 @@ void FifteenDotFourDevice::pollCnfCb(ApiMac_mlmePollCnf_t *pData) {
  */
 void FifteenDotFourDevice::dataCnfCB(ApiMac_mcpsDataCnf_t *pDataCnf)
 {
+    // data sending state ->
+        //    if (CONFIC_MAC_BEACON_ORDER == JDLLC_BEACON_ORDER_NON_BEACON)
+        //    {
+                if(pDataCnf->status == ApiMac_status_noAck)
+                {
+                    //_this->updateDataFailures()
+                    // how to handle max data failures or not -> switch to a polling state
+                    _this->revents = POLL_EVENT;
+                }
+                else if (pDataCnf->status == ApiMac_status_success)
+                {
+                    //-this->resetDataFailures
+                    _this->revents = IDLE_EVENT;
+                }
+        //    }
 }
 
 /*!
@@ -226,7 +252,13 @@ void FifteenDotFourDevice::dataCnfCB(ApiMac_mcpsDataCnf_t *pDataCnf)
 
 void FifteenDotFourDevice::dataIndCB(ApiMac_mcpsDataInd_t *pDataInd)
 {
-    if(pDataInd->dstPanId == _this->getPanID()) {
+    if(pDataInd != NULL && pDataInd->msdu.p != NULL && pDataInd->msdu.len > 0)
+    {
+        if(pDataInd->dstPanId == _this->getPanID())
+        {
+
+          buffer_write_multiple(&(_this->rx_buffer), pDataInd->msdu.p, (size_t)pDataInd->msdu.len);
+        }
     }
 }
 

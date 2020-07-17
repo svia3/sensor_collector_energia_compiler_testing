@@ -58,6 +58,8 @@ class FifteenDotFourDevice : public FifteenDotFour
 		bool getPanIdMatch(void) {return panIdMatch;};
 		void setCoordShortAddr(uint16_t addr) {coordShortAddr = addr;};
 		uint16_t getCoordShortAddr(void) {return coordShortAddr;};
+		bool beginTransmission();
+		bool endTransmission();
 
         /* ------------------------------------------------- */
         /*     Static Callback Functions for the MAC         */
