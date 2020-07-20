@@ -38,6 +38,11 @@ ORDERED_OBJS += \
 "./software_stack/ti15_4stack/services/nvocmp.obj" \
 "./software_stack/ti15_4stack/services/saddr.obj" \
 "./software_stack/ti15_4stack/stack_user_api/api_mac/api_mac.obj" \
+"../src/sysbios/m3_Hwi_asm.obj" \
+"../src/sysbios/m3_Hwi_asm_switch.obj" \
+"../src/sysbios/m3_IntrinsicsSupport_asm.obj" \
+"../src/sysbios/m3_TaskSupport_asm.obj" \
+"../src/sysbios/rom_sysbios.obj" \
 "../cc13x2lp.cmd" \
 $(GEN_CMDS__FLAG) \
 -l"C:/ti/simplelink_cc13x2_26x2_sdk_4_10_00_78/source/ti/ti154stack/library/tirtos/ccs/bin/maclib_nosecure_cc13x2.a" \
@@ -72,6 +77,7 @@ RMDIR := RMDIR /S/Q
 -include software_stack/ti15_4stack/radio_configuration/subdir_vars.mk
 -include software_stack/ti15_4stack/services/subdir_vars.mk
 -include software_stack/ti15_4stack/stack_user_api/api_mac/subdir_vars.mk
+-include src/sysbios/subdir_vars.mk
 -include subdir_rules.mk
 -include application/FifteenDotFour/src/subdir_rules.mk
 -include application/FifteenDotFour/src/utils/buffer_c/subdir_rules.mk
@@ -87,6 +93,7 @@ RMDIR := RMDIR /S/Q
 -include software_stack/ti15_4stack/radio_configuration/subdir_rules.mk
 -include software_stack/ti15_4stack/services/subdir_rules.mk
 -include software_stack/ti15_4stack/stack_user_api/api_mac/subdir_rules.mk
+-include src/sysbios/subdir_rules.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)

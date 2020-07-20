@@ -141,4 +141,5 @@ software_stack/ti15_4stack/osal_port \
 software_stack/ti15_4stack/radio_configuration \
 software_stack/ti15_4stack/services \
 software_stack/ti15_4stack/stack_user_api/api_mac \
+src/sysbios \
 

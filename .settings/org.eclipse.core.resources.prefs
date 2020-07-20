@@ -32,5 +32,7 @@ encoding//Release/software_stack/ti15_4stack/stack_user_api/api_mac/subdir_vars.
 encoding//Release/software_stack/ti15_4stack/subdir_rules.mk=UTF-8
 encoding//Release/software_stack/ti15_4stack/subdir_vars.mk=UTF-8
 encoding//Release/sources.mk=UTF-8
+encoding//Release/src/sysbios/subdir_rules.mk=UTF-8
+encoding//Release/src/sysbios/subdir_vars.mk=UTF-8
 encoding//Release/subdir_rules.mk=UTF-8
 encoding//Release/subdir_vars.mk=UTF-8
