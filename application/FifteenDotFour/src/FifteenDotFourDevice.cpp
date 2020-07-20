@@ -70,7 +70,7 @@ FifteenDotFourDevice::FifteenDotFourDevice() : FifteenDotFour(true)
 /* These methods should be aggregated into FifteenDotFour parent class once
  * we figure out what can be consolidated
  */
-bool FifteenDotFourDevice::beginTransmission() {
+bool FifteenDotFourDevice::beginTransmission(uint16_t address) {
     return false;
 }
 
