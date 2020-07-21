@@ -1,3 +1,5 @@
+// test master
+
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Task.h>
 #include <xdc/runtime/System.h>
@@ -30,7 +32,7 @@ extern void Board_init(void);
 #define SPANID 0xFFFF
 #define CPANID 0X0001
 
-#define COLLECTOR 1       /* Comment out when switching between boards */
+//#define COLLECTOR 1       /* Comment out when switching between boards */
 
 #ifdef COLLECTOR
 FifteenDotFourCollector myNode;
