@@ -60,6 +60,23 @@ class FifteenDotFourCollector : public FifteenDotFour
         ApiMac_sAddr_t address ={{.shortAddr = 0xAABB}, ApiMac_addrType_short};
 //        FifteenDotFour* parent = super;
 
+        /* Buffer Handling implementing buffer_c API */
+        buffer_t rx_buffer;
+        buffer_t tx_buffer;
+
+        /* ------------------------------- */
+        /* Association table in cllc.c     */
+        /* ------------------------------- */
+//        associationDevice_t associationTable[CONFIG_MAX_DEVICES];
+//        uint8_t numAssocDevices;
+//        Cllc_statistics_t Cllc_statistics;
+
+        /* Maintaining connected devices */
+//        associationDevice_t findDevice(ApiMac_sAddrExt_t *pAddr);
+//        bool addDevice(associationDevice_t* newDevice, ApiMac_deviceDescriptor_t *devInfo);
+//        void createShortAddress(ApiMac_deviceDescriptor_t *devInfo);
+        /* ------------------------------- */
+
     protected:
         Semaphore_Handle sem;
 };

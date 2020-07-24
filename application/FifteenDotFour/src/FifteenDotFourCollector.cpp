@@ -184,25 +184,28 @@ bool FifteenDotFourCollector::beginTransmission(uint16_t address)
 bool FifteenDotFourCollector::endTransmission()
 {
     ApiMac_mcpsDataReq_t dataReq;
-    memset(&dataReq, 0, sizeof(ApiMac_mcpsDataReq_t));
+   memset(&dataReq, 0, sizeof(ApiMac_mcpsDataReq_t));
 
-    dataReq.dstAddr.addrMode = ApiMac_addrType_short;
-    dataReq.dstAddr.addr.shortAddr = 0x2000;
-    dataReq.srcAddrMode = ApiMac_addrType_short;
-    dataReq.dstPanId = 0xfafa;
-    dataReq.msduHandle = 0;
-    dataReq.txOptions.ack = true;
-    dataReq.txOptions.indirect = true;
+   dataReq.dstAddr.addrMode = ApiMac_addrType_short;
+   dataReq.dstAddr.addr.shortAddr = 0x2000;
+   dataReq.srcAddrMode = ApiMac_addrType_short;
+   dataReq.dstPanId = 0xfafa;
+   dataReq.msduHandle = 0;
+   dataReq.txOptions.ack = true;
+   dataReq.txOptions.indirect = true;
 
-    /* Buffer Handling */
-    int msgSize = buffer_get_size(&tx_buffer);
-    dataReq.msdu.len = msgSize;
-    buffer_read_multiple(dataReq.msdu.p, &tx_buffer, msgSize);
+   /*-------------------------------------------------------*/
+   /* Buffer Handling */
+   /*-------------------------------------------------------*/
+   int msgSize = buffer_get_size(&tx_buffer);
+   dataReq.msdu.len = msgSize;
+   buffer_read_multiple(dataReq.msdu.p, &tx_buffer, msgSize);
+   /*-------------------------------------------------------*/
 
-    ApiMac_status_t status = ApiMac_mcpsDataReq(&dataReq);
+   ApiMac_status_t status = ApiMac_mcpsDataReq(&dataReq);
 
-    // set last error to ApiMac_status
-    return status == ApiMac_status_success ? true : false;
+   // set last error to ApiMac_status
+   return status == ApiMac_status_success ? true : false;
 }
 
 /* API MAC Callbacks */
@@ -262,3 +265,62 @@ void FifteenDotFourCollector::beaconNotifyIndCb(ApiMac_mlmeBeaconNotifyInd_t *pD
 void FifteenDotFourCollector::scanCnfCb(ApiMac_mlmeScanCnf_t *pData)
 {
 }
+
+
+///* ---------------------------------------------------------------------- */
+///* List of API calls for maintaining, editing, and searching device table */
+///* ---------------------------------------------------------------------- */
+//associationDevice_t FifteenDotFourCollector::findDevice(ApiMac_sAddrExt_t *pAddr)
+//{
+//
+////    associationDevice_t device = NULL;
+//
+//    /* Check for invalid parameters */
+//    if((pAddr == NULL))    // || (pAddr->addrMode == ApiMac_addrType_none))
+//    {
+//        return NULL;
+//    }
+//
+//    /* Searching for device in array of associationDevice_t structs */
+//    for(int i = 0; i < CONFIG_MAX_DEVICES; ++i)
+//    {
+//
+////      if(pAddr->addrMode == ApiMac_addrType_short)
+////          {
+//                if(*pAddr == this->associationTable[i].extAddress)
+//                {
+//                    /* Make sure the entry is valid. */
+//                   if(associationTable[i].shortAddress != CSF_INVALID_SHORT_ADDR)
+//                   {
+//                        return associationTable[i];
+//                   }
+//                }
+////          }
+//    }
+//    return NULL;
+//}
+//
+//bool FifteenDotFourCollector::addDevice(associationDevice_t* newDevice, ApiMac_deviceDescriptor_t *devInfo)
+//{
+////    associationDevice_t device;
+//      memcpy(newDevice->extAddress, devInfo->extAddress, 8);
+//      memcpy(newDevice->shortAddress, createShortAddress(devInfo), 2);
+//      newDevice->status = ASSOC_STATUS_ALIVE;
+//
+//      /* Add to association table */
+//      if (!associationTable[newDevice->shortAddress])   // memories is zeroed out
+//      {
+//          associationTable[newDevice->shortAddress] = *newDevice;
+//      }
+//}
+//
+//
+//void createShortAddress(ApiMac_deviceDescriptor_t *devInfo)
+//{
+//    /* New device, make a new short address */
+////            assocRsp.status = ApiMac_assocStatus_panAccessDenied;
+//    devInfo->shortAddress = this->numAssocDevices + ASSOC_DEVICE_STARTING_SHORT_ADDR;
+//}
+////
+//
+
