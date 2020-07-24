@@ -235,6 +235,7 @@ application/main.obj: C:/ti/simplelink_cc13x2_26x2_sdk_4_10_00_78/kernel/tirtos/
 application/main.obj: C:/Users/a0488612/workspace_v10/sensor_collector_energia_ti_compiler_testing/sensor_collector_energia_ti_compiler_testing/software_stack/ti15_4stack/radio_configuration/mac_user_config.h
 application/main.obj: C:/Users/a0488612/workspace_v10/sensor_collector_energia_ti_compiler_testing/sensor_collector_energia_ti_compiler_testing/application/FifteenDotFour/src/FifteenDotFour.h
 application/main.obj: C:/Users/a0488612/workspace_v10/sensor_collector_energia_ti_compiler_testing/sensor_collector_energia_ti_compiler_testing/application/FifteenDotFour/src/utils/buffer_c/buffer.h
+application/main.obj: C:/Users/a0488612/workspace_v10/sensor_collector_energia_ti_compiler_testing/sensor_collector_energia_ti_compiler_testing/application/collector/advanced_config.h
 application/main.obj: C:/Users/a0488612/workspace_v10/sensor_collector_energia_ti_compiler_testing/sensor_collector_energia_ti_compiler_testing/application/FifteenDotFour/src/FifteenDotFourDevice.h
 application/main.obj: C:/ti/simplelink_cc13x2_26x2_sdk_4_10_00_78/kernel/tirtos/packages/ti/sysbios/knl/Semaphore.h
 application/main.obj: C:/Users/a0488612/workspace_v10/sensor_collector_energia_ti_compiler_testing/sensor_collector_energia_ti_compiler_testing/application/FifteenDotFour/src/utils/util_timer.h
@@ -483,6 +484,7 @@ C:/ti/simplelink_cc13x2_26x2_sdk_4_10_00_78/kernel/tirtos/packages/ti/sysbios/kn
 C:/Users/a0488612/workspace_v10/sensor_collector_energia_ti_compiler_testing/sensor_collector_energia_ti_compiler_testing/software_stack/ti15_4stack/radio_configuration/mac_user_config.h: 
 C:/Users/a0488612/workspace_v10/sensor_collector_energia_ti_compiler_testing/sensor_collector_energia_ti_compiler_testing/application/FifteenDotFour/src/FifteenDotFour.h: 
 C:/Users/a0488612/workspace_v10/sensor_collector_energia_ti_compiler_testing/sensor_collector_energia_ti_compiler_testing/application/FifteenDotFour/src/utils/buffer_c/buffer.h: 
+C:/Users/a0488612/workspace_v10/sensor_collector_energia_ti_compiler_testing/sensor_collector_energia_ti_compiler_testing/application/collector/advanced_config.h: 
 C:/Users/a0488612/workspace_v10/sensor_collector_energia_ti_compiler_testing/sensor_collector_energia_ti_compiler_testing/application/FifteenDotFour/src/FifteenDotFourDevice.h: 
 C:/ti/simplelink_cc13x2_26x2_sdk_4_10_00_78/kernel/tirtos/packages/ti/sysbios/knl/Semaphore.h: 
 C:/Users/a0488612/workspace_v10/sensor_collector_energia_ti_compiler_testing/sensor_collector_energia_ti_compiler_testing/application/FifteenDotFour/src/utils/util_timer.h: 

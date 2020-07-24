@@ -32,16 +32,18 @@ extern void Board_init(void);
 #define SPANID 0xFFFF
 #define CPANID 0X0001
 
-//#define COLLECTOR 1       /* Comment out when switching between boards */
+#define COLLECTOR        /* Comment out when switching between boards */
 
-#ifdef COLLECTOR
-FifteenDotFourCollector myNode;
-#else
-FifteenDotFourDevice myNode;
-#endif
 
 void appTaskFxn(UArg a0, UArg a1)
 {
+
+    #ifdef COLLECTOR
+    FifteenDotFourCollector myNode;
+    #else
+    FifteenDotFourDevice myNode;
+    #endif
+
 //    uint32_t now;
 //    uint32_t then;
 
