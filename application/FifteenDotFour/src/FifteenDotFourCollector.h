@@ -70,8 +70,8 @@ class FifteenDotFourCollector : public FifteenDotFour
 
         /* Maintaining connected devices */
         associationDevice_t* findDevice(ApiMac_sAddrExt_t *pAddr);
-        bool addDevice(associationDevice_t* newDevice, ApiMac_deviceDescriptor_t *devInfo);
-        void createShortAddress(ApiMac_deviceDescriptor_t *devInfo);
+        bool addDevice(associationDevice_t* newDevice, ApiMac_mlmeAssociateInd_t *pData);
+        void createShortAddress(associationDevice_t* newDevice);
         /* ------------------------------- */
 
     protected:

@@ -15,8 +15,9 @@
 /* Invalid short address */
 #define CSF_INVALID_SHORT_ADDR              0xFFFF
 /*! Association status */
-#define ASSOC_STATUS_ALIVE 0x0001
-#define ASSOC_STATUS_DEAD  0x0000
+#define ASSOC_STATUS_DEAD  (1 << 0)
+#define ASSOC_STATUS_ALIVE (1 << 1)
+
 
 /*! Building block for association table */
 typedef struct associationDevice_t
@@ -30,7 +31,7 @@ typedef struct associationDevice_t
     /*! RSSI */
     int8_t rssi;
     /*! Device alive status */
-    uint16_t status;
+    uint8_t status;
 } associationDevice_t;
 
 ///* Hash Table Implementation */
