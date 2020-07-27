@@ -249,9 +249,8 @@ void FifteenDotFourCollector::assocIndCb(ApiMac_mlmeAssociateInd_t *pData)
 
 //    devInfo.shortAddress = 0x0002;
     memcpy(&devInfo.extAddress, &pData->deviceAddress, 8);
-
     memcpy(&assocRsp.deviceAddress, &devInfo.extAddress, 8);
-    assocRsp.assocShortAddress = devInfo.shortAddress;
+    memcpy(&assocRsp.assocShortAddress, &devInfo.shortAddress, 2);
 
     /* Send out the associate response */
     ApiMac_mlmeAssociateRsp(&assocRsp);
@@ -316,7 +315,7 @@ associationDevice_t* FifteenDotFourCollector::findDevice(ApiMac_sAddrExt_t *pAdd
 
 //      if(pAddr->addrMode == ApiMac_addrType_short)
 //          {
-                if(*pAddr == this->associationTable[i].extAddress)
+                if(*pAddr == this->associationTable[i].extAddress)      // search based off MAC, don't have access to short here
                 {
                     /* Make sure the entry is valid. */
                    if(associationTable[i].shortAddress != CSF_INVALID_SHORT_ADDR)
@@ -332,20 +331,25 @@ associationDevice_t* FifteenDotFourCollector::findDevice(ApiMac_sAddrExt_t *pAdd
 bool FifteenDotFourCollector::addDevice(associationDevice_t* newDevice, ApiMac_deviceDescriptor_t *devInfo)
 {
 //    associationDevice_t device;
-      memcpy(newDevice->extAddress, devInfo->extAddress, 8);
-      createShortAddress(devInfo);
-      memcpy(newDevice->shortAddress, devInfo->shortAddress, 2);
+      memcpy(&newDevice->extAddress, &devInfo->extAddress, 8);
+      memcpy(&newDevice->shortAddress, &devInfo->shortAddress, 2);
       newDevice->status = ASSOC_STATUS_ALIVE;
 
-      /* Add to association table */
-      if (associationTable[newDevice->shortAddress] == 0)   // memories is zeroed out
-      {
-          associationTable[newDevice->shortAddress] = *newDevice;
+      if (devInfo->shortAddress == CSF_INVALID_SHORT_ADDR)
+      { //default
+              createShortAddress(devInfo);
       }
+      /* Add to association table */
+//      if (this->associationTable[newDevice->shortAddress])   // memories is zeroed out
+//      {
+          memcpy(&this->associationTable[newDevice->shortAddress], newDevice, sizeof(newDevice));
+          return true;
+//      }
+//      return false;
 }
 
 
-void createShortAddress(ApiMac_deviceDescriptor_t *devInfo)
+void FifteenDotFourCollector::createShortAddress(ApiMac_deviceDescriptor_t *devInfo)
 {
     /* New device, make a new short address */
 //            assocRsp.status = ApiMac_assocStatus_panAccessDenied;
