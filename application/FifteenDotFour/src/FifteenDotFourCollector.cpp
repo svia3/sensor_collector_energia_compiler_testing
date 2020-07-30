@@ -208,9 +208,9 @@ bool FifteenDotFourCollector::endTransmission()
    /*-------------------------------------------------------*/
    uint8_t msgSize = buffer_get_size(&tx_buffer);
 //   memset(dataReq.msdu.p, 0, msgSize);
-//   dataReq.msdu.len = msgSize;
+   dataReq.msdu.len = msgSize;
 //   dataReq.msdu.p = (uint8_t*)malloc(msgSize);                  // give ptr a valid mem address
-   memset(dataReq.msdu.p, 0, msgSize);
+//   memset(dataReq.msdu.p, 0, msgSize);
 //   buffer_read_multiple(dataReq.msdu.p, &tx_buffer, msgSize);
    dataReq.msdu.p = tx_buffer.buffer;
    /*-------------------------------------------------------*/
@@ -229,36 +229,46 @@ void FifteenDotFourCollector::orphanIndCb(ApiMac_mlmeOrphanInd_t *pData)
 
 void FifteenDotFourCollector::assocIndCb(ApiMac_mlmeAssociateInd_t *pData)
 {
-    ApiMac_mlmeAssociateRsp_t assocRsp;
-//    ApiMac_deviceDescriptor_t devInfo;          // redundancy -> change this to just extAddress
 
+//    ApiMac_mlmeAssociateRsp_t assocRsp;
+//    ApiMac_deviceDescriptor_t devInfo;
+//
 //    memset(&devInfo, 0, sizeof(ApiMac_deviceDescriptor_t));
-
-
+//
+//    /* No security. Set to all 0's */
+//    memset(&assocRsp.sec, 0, sizeof(ApiMac_sec_t));
 //    assocRsp.status = ApiMac_assocStatus_success;
-
-//    devInfo.shortAddress = CSF_INVALID_SHORT_ADDR;      //default
-//    memcpy(devInfo.extAddress, pData->deviceAddress, 8);
-//    devInfo.panId =
+//
+//    devInfo.shortAddress = 0x0002;
+//    memcpy(&devInfo.extAddress, &pData->deviceAddress, 8);
+//
+//    memcpy(&assocRsp.deviceAddress, &devInfo.extAddress, 8);
+//    assocRsp.assocShortAddress = devInfo.shortAddress;
+//
+//    /* Send out the associate response */
+//    ApiMac_mlmeAssociateRsp(&assocRsp);
+/*--------------------------------------------------------------*/
+    ApiMac_mlmeAssociateRsp_t assocRsp;
 
     // find short address -> create an API call for this
-    associationDevice_t* device;
-    device = _this->findDevice(&pData->deviceAddress);
-    if (!device) {
+    associationDevice_t device; // = (associationDevice_t*)malloc(sizeof(associationDevice_t));
+//    memset(device, 0, sizeof(associationDevice_t));
+    if (!(_this->findDevice(&device, &pData->deviceAddress))) {
         /* Add to association table */
-        if (_this->addDevice(device, pData)) {     // null ptr?
+        if (_this->addDevice(&device, pData)) {     // null ptr?
             /* Successfully added to table, pass this info onto MAC */
-            assocRsp.status = ApiMac_assocStatus_success;
+//            assocRsp.status = ApiMac_assocStatus_success;
             /* Increment connected devices */
             _this->numAssocDevices++;
         } else {
             assocRsp.status = ApiMac_assocStatus_panAccessDenied;
         }
     }
-
+    /* Successfully added or found */
+    assocRsp.status = ApiMac_assocStatus_success;
 //    devInfo.shortAddress = 0x0002;
-    memcpy(&assocRsp.deviceAddress, &device->extAddress, 8);
-    memcpy(&assocRsp.assocShortAddress, &device->shortAddress, 2);
+    memcpy(&assocRsp.deviceAddress, &device.extAddress, 8);
+    memcpy(&assocRsp.assocShortAddress, &device.shortAddress, 2);
     /* No security. Set to all 0's */
     memset(&assocRsp.sec, 0, sizeof(ApiMac_sec_t));
 
@@ -310,55 +320,49 @@ void FifteenDotFourCollector::scanCnfCb(ApiMac_mlmeScanCnf_t *pData)
 ///* ---------------------------------------------------------------------- */
 ///* List of API calls for maintaining, editing, and searching device table */
 ///* ---------------------------------------------------------------------- */
-associationDevice_t* FifteenDotFourCollector::findDevice(ApiMac_sAddrExt_t *pAddr)
+bool FifteenDotFourCollector::findDevice(associationDevice_t* newDevice, ApiMac_sAddrExt_t *pAddr)
 {
 
-    associationDevice_t* device = nullptr;
+//    associationDevice_t* device = nullptr;
 
     /* Check for invalid parameters */
-    if((pAddr == NULL))    // || (pAddr->addrMode == ApiMac_addrType_none))
+    if((!pAddr || !newDevice))    // || (pAddr->addrMode == ApiMac_addrType_none))
     {
-        return NULL;
+        return false;
     }
 
     /* Searching for device in array of associationDevice_t structs */
     for(int i = 0; i < CONFIG_MAX_DEVICES; ++i)
     {
 
-//      if(pAddr->addrMode == ApiMac_addrType_short)
-//          {       // make this a mem comparison
-                if(*pAddr == this->associationTable[i].extAddress)      // search based off MAC, don't have access to short here
-                {
-                    /* Make sure the entry is valid. */
-                   if(associationTable[i].shortAddress != CSF_INVALID_SHORT_ADDR)
-                   {
-                        device = &associationTable[i];
-                   }
-                }
-//          }
+        if(this->associationTable[i].shortAddress != CSF_INVALID_SHORT_ADDR)        /* Quicker end condition */
+        {
+            if(!memcmp(pAddr, &this->associationTable[i].extAddress, APIMAC_SADDR_EXT_LEN))      // search based off MAC, don't have access to short here
+            {
+                memcpy(newDevice, &associationTable[i], sizeof(associationDevice_t));           /* Assign the entry */
+                return true;
+            }
+        }
     }
-    return device;
+    return false;
 }
 
 bool FifteenDotFourCollector::addDevice(associationDevice_t* newDevice, ApiMac_mlmeAssociateInd_t *pData)
 {
 //    associationDevice_t device;
       memcpy(&newDevice->extAddress, &pData->deviceAddress, 8);
-//      memcpy(&newDevice->shortAddress, &devInfo->shortAddress, 2);
+      createShortAddress(newDevice);
+//      newDevice->extAddress = pData->deviceAddress;
+      memcpy(&newDevice->capInfo, &pData->capabilityInformation, sizeof(ApiMac_capabilityInfo_t));
+//      newDevice->capInfo = pData->capabilityInformation;        // only = up to 64 bits, 8 bytes //
       newDevice->status = ASSOC_STATUS_ALIVE;
-
-      if (newDevice->shortAddress == CSF_INVALID_SHORT_ADDR)        /* Default set to invalid */
-      { //default
-              createShortAddress(newDevice);
-      }
-
 
       /* Searching for first invalid spot */
       for(int i = 0; i < CONFIG_MAX_DEVICES; ++i)
       {
-          if (associationTable[i].shortAddress == CSF_INVALID_SHORT_ADDR)
+          if (associationTable[i].shortAddress == CSF_INVALID_SHORT_ADDR)       /* Looking for 0xFFFF */
           {
-              memcpy(&this->associationTable[i], newDevice, sizeof(newDevice));
+              memcpy(&this->associationTable[i], newDevice, sizeof(associationDevice_t));
               return true;
           }
        }
@@ -368,12 +372,12 @@ bool FifteenDotFourCollector::addDevice(associationDevice_t* newDevice, ApiMac_m
       {
           if (associationTable[i].status == ASSOC_STATUS_DEAD)
           {
-              memcpy(&this->associationTable[i], newDevice, sizeof(newDevice));
+              memcpy(&this->associationTable[i], newDevice, sizeof(associationDevice_t));
               return true;
           }
       }
 
-      /* 50 devices connected */
+      /* 50 devices connected and all ASSOC_STATUS_ALIVE*/
       return false;
 }
 

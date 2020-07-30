@@ -69,8 +69,8 @@ class FifteenDotFourCollector : public FifteenDotFour
 //        Cllc_statistics_t Cllc_statistics;
 
         /* Maintaining connected devices */
-        associationDevice_t* findDevice(ApiMac_sAddrExt_t *pAddr);
-        bool addDevice(associationDevice_t* newDevice, ApiMac_mlmeAssociateInd_t *pData);
+        bool findDevice(associationDevice_t* newDevice, ApiMac_sAddrExt_t* pAddr);
+        bool addDevice(associationDevice_t* newDevice, ApiMac_mlmeAssociateInd_t* pData);
         void createShortAddress(associationDevice_t* newDevice);
         /* ------------------------------- */
 
