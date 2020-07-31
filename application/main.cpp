@@ -1,18 +1,19 @@
-// test master
-
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Task.h>
 #include <xdc/runtime/System.h>
 #include "ti_drivers_config.h"
 #include "macTask.h"
 #include <application/FifteenDotFour/src/FifteenDotFourCollector.h>
-#include <FifteenDotFourDevice.h>
+#include <application/FifteenDotFour/src/FifteenDotFourDevice.h>
 #include <inc/hw_ccfg.h>
 #include <inc/hw_ccfg_simple_struct.h>
 
 //#include "mac_user_config.h"
 #include "macconfig.h"
 #include "nvocmp.h"
+#include <Energia.h>
+#include <ti/runtime/wiring/cc13x2/variants/CC1312R1_LAUNCHXL/pins_energia.h>
+#include <WiFi.h>
 
 #ifdef NV_RESTORE
 mac_Config_t Main_user1Cfg =
@@ -28,15 +29,11 @@ static uint8_t appTaskStack[APP_TASK_STACK_SIZE];
 
 static uint8_t _macTaskId;
 
-/* Used to check for a valid extended address */
-static const uint8_t dummyExtAddr[] =
-    { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-
 extern void Board_init(void);
 #define SPANID 0xFFFF
 #define CPANID 0X0001
 
-#define COLLECTOR        /* Comment out when switching between boards */
+#define COLLECTOR
 
 #ifdef COLLECTOR
 FifteenDotFourCollector myNode;
@@ -44,11 +41,100 @@ FifteenDotFourCollector myNode;
 FifteenDotFourDevice myNode;
 #endif
 
+void printWifiData() {
+  // print your WiFi IP address:
+  IPAddress ip = WiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
+  Serial.println(ip);
+
+  // print your MAC address:
+  byte mac[6];
+  WiFi.macAddress(mac);
+  Serial.print("MAC address: ");
+  Serial.print(mac[5], HEX);
+  Serial.print(":");
+  Serial.print(mac[4], HEX);
+  Serial.print(":");
+  Serial.print(mac[3], HEX);
+  Serial.print(":");
+  Serial.print(mac[2], HEX);
+  Serial.print(":");
+  Serial.print(mac[1], HEX);
+  Serial.print(":");
+  Serial.println(mac[0], HEX);
+
+}
+
+void printCurrentNet() {
+  // print the SSID of the network you're attached to:
+  Serial.print("SSID: ");
+  Serial.println(WiFi.SSID());
+
+  // print the MAC address of the router you're attached to:
+  byte bssid[6];
+  WiFi.BSSID(bssid);
+  Serial.print("BSSID: ");
+  Serial.print(bssid[5], HEX);
+  Serial.print(":");
+  Serial.print(bssid[4], HEX);
+  Serial.print(":");
+  Serial.print(bssid[3], HEX);
+  Serial.print(":");
+  Serial.print(bssid[2], HEX);
+  Serial.print(":");
+  Serial.print(bssid[1], HEX);
+  Serial.print(":");
+  Serial.println(bssid[0], HEX);
+
+  // print the received signal strength:
+  long rssi = WiFi.RSSI();
+  Serial.print("signal strength (RSSI):");
+  Serial.println(rssi);
+
+  // print the encryption type:
+  byte encryption = WiFi.encryptionType();
+  Serial.print("Encryption Type:");
+  Serial.println(encryption, HEX);
+  Serial.println();
+}
+
 void appTaskFxn(UArg a0, UArg a1)
 {
+    uint32_t now;
+    uint32_t then;
+    const char ssid[] = "energia";
+    const char password[] = "launchpad";
 
-//    uint32_t now;
-//    uint32_t then;
+    pinMode(RED_LED, OUTPUT);
+    digitalWrite(RED_LED, HIGH);
+    Serial.begin(115200);
+    // attempt to connect to Wifi network:
+    Serial.print("Attempting to connect to Network named: ");
+    // print the network name (SSID);
+    Serial.println(ssid);
+
+    WiFi.begin((char *)ssid, (char *)password);
+
+    while ( WiFi.status() != WL_CONNECTED) {
+      // print dots while we wait to connect
+      Serial.print(".");
+      delay(300);
+    }
+
+    Serial.println("\nYou're connected to the network");
+    Serial.println("Waiting for an ip address");
+
+    while (WiFi.localIP() == INADDR_NONE) {
+      // print dots while we wait for an ip addresss
+      Serial.print(".");
+      delay(300);
+    }
+
+    Serial.println("\nIP Address obtained");
+
+    printCurrentNet();
+    printWifiData();
 
     /* Get the baked-in primary IEEE Address */
     memcpy(ApiMac_extAddr, (uint8_t *)(FCFG1_BASE + EXTADDR_OFFSET),
@@ -70,8 +156,9 @@ void appTaskFxn(UArg a0, UArg a1)
     }
 #endif
     /* Kick off application - Forever loop */
+
     char msg[] = "Hello, World!";
-    uint32_t now, start;
+//        uint32_t now, start;
     start = Clock_getTicks() * (1000 / Clock_tickPeriod);
     while(1)
     {
@@ -89,7 +176,7 @@ void appTaskFxn(UArg a0, UArg a1)
          }
 #endif
         myNode.process();
-    }
+     }
 }
 
 int main(void)
@@ -108,4 +195,3 @@ int main(void)
 
     return (0);
 }
-

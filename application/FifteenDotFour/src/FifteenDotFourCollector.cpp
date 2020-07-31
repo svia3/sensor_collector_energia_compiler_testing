@@ -229,41 +229,22 @@ void FifteenDotFourCollector::orphanIndCb(ApiMac_mlmeOrphanInd_t *pData)
 
 void FifteenDotFourCollector::assocIndCb(ApiMac_mlmeAssociateInd_t *pData)
 {
-
-//    ApiMac_mlmeAssociateRsp_t assocRsp;
-//    ApiMac_deviceDescriptor_t devInfo;
-//
-//    memset(&devInfo, 0, sizeof(ApiMac_deviceDescriptor_t));
-//
-//    /* No security. Set to all 0's */
-//    memset(&assocRsp.sec, 0, sizeof(ApiMac_sec_t));
-//    assocRsp.status = ApiMac_assocStatus_success;
-//
-//    devInfo.shortAddress = 0x0002;
-//    memcpy(&devInfo.extAddress, &pData->deviceAddress, 8);
-//
-//    memcpy(&assocRsp.deviceAddress, &devInfo.extAddress, 8);
-//    assocRsp.assocShortAddress = devInfo.shortAddress;
-//
-//    /* Send out the associate response */
-//    ApiMac_mlmeAssociateRsp(&assocRsp);
 /*--------------------------------------------------------------*/
     ApiMac_mlmeAssociateRsp_t assocRsp;
+    associationDevice_t device;
 
-    // find short address -> create an API call for this
-    associationDevice_t device; // = (associationDevice_t*)malloc(sizeof(associationDevice_t));
-//    memset(device, 0, sizeof(associationDevice_t));
+    /* Search for the device, if you cannot find it, add it for cache lookup */
     if (!(_this->findDevice(&device, &pData->deviceAddress))) {
         /* Add to association table */
         if (_this->addDevice(&device, pData)) {     // null ptr?
             /* Successfully added to table, pass this info onto MAC */
-//            assocRsp.status = ApiMac_assocStatus_success;
             /* Increment connected devices */
             _this->numAssocDevices++;
         } else {
             assocRsp.status = ApiMac_assocStatus_panAccessDenied;
         }
     }
+
     /* Successfully added or found */
     assocRsp.status = ApiMac_assocStatus_success;
 //    devInfo.shortAddress = 0x0002;
