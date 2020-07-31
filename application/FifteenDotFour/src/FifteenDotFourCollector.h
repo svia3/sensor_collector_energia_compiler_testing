@@ -6,6 +6,7 @@
 #include <software_stack/ti15_4stack/radio_configuration/mac_user_config.h>
 //#include <utils/buffer_c/buffer.h>
 #include <FifteenDotFour.h>
+#include <application/collector/advanced_config.h>
 
 #define MIN_PERSISTENCE_TIME_USEC 2000000
 #define INDIRECT_PERSISTENT_TIME (MAX((5 * 1000 * CONFIG_POLLING_INTERVAL / 2), MIN_PERSISTENCE_TIME_USEC)/ \
@@ -27,7 +28,7 @@
 class FifteenDotFourCollector : public FifteenDotFour
 {
     public:
-        FifteenDotFourCollector(void);
+        FifteenDotFourCollector();
         void begin();   // no auto-join
         void start(void);
         void setChannel(uint8_t c) {channel = c;};
@@ -59,6 +60,19 @@ class FifteenDotFourCollector : public FifteenDotFour
         /* We assume short address mode */
         ApiMac_sAddr_t address ={{.shortAddr = 0xAABB}, ApiMac_addrType_short};
 //        FifteenDotFour* parent = super;
+
+        /* ------------------------------- */
+        /* Association table in cllc.c     */
+        /* ------------------------------- */
+        associationDevice_t associationTable[CONFIG_MAX_DEVICES];
+        uint8_t numAssocDevices;
+//        Cllc_statistics_t Cllc_statistics;
+
+        /* Maintaining connected devices */
+        bool findDevice(associationDevice_t* newDevice, ApiMac_sAddrExt_t* pAddr);
+        bool addDevice(associationDevice_t* newDevice, ApiMac_mlmeAssociateInd_t* pData);
+        void createShortAddress(associationDevice_t* newDevice);
+        /* ------------------------------- */
 
     protected:
         Semaphore_Handle sem;

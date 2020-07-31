@@ -1,3 +1,5 @@
+// test master
+
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Task.h>
 #include <xdc/runtime/System.h>
@@ -26,11 +28,15 @@ static uint8_t appTaskStack[APP_TASK_STACK_SIZE];
 
 static uint8_t _macTaskId;
 
+/* Used to check for a valid extended address */
+static const uint8_t dummyExtAddr[] =
+    { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+
 extern void Board_init(void);
 #define SPANID 0xFFFF
 #define CPANID 0X0001
 
-#define COLLECTOR 1       /* Comment out when switching between boards */
+#define COLLECTOR        /* Comment out when switching between boards */
 
 #ifdef COLLECTOR
 FifteenDotFourCollector myNode;
@@ -40,6 +46,7 @@ FifteenDotFourDevice myNode;
 
 void appTaskFxn(UArg a0, UArg a1)
 {
+
 //    uint32_t now;
 //    uint32_t then;
 
@@ -64,7 +71,8 @@ void appTaskFxn(UArg a0, UArg a1)
 #endif
     /* Kick off application - Forever loop */
     char msg[] = "Hello, World!";
-
+    uint32_t now, start;
+    start = Clock_getTicks() * (1000 / Clock_tickPeriod);
     while(1)
     {
 #ifdef COLLECTOR
@@ -73,7 +81,12 @@ void appTaskFxn(UArg a0, UArg a1)
         char msg[] = "Hello, World!";
 //        char msg = 'a';
         myNode.write((const uint8_t*)msg, strlen(msg));
-        bool error = myNode.endTransmission();
+        // wrapper for end tranmission so dont flood mac
+        now = Clock_getTicks() * (1000 / Clock_tickPeriod);
+        if((now - start) > 5000) {
+            bool error = myNode.endTransmission();
+            start = Clock_getTicks() * (1000 / Clock_tickPeriod);
+         }
 #endif
         myNode.process();
     }

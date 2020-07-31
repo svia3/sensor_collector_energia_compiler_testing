@@ -102,10 +102,6 @@ class FifteenDotFourDevice : public FifteenDotFour
         Clock_Struct scanClkStruct;
         Clock_Handle scanClkHandle;
 
-        /* Buffer Handling implementing buffer_c API */
-        buffer_t rx_buffer;
-        buffer_t tx_buffer;
-
 	protected:
 		macUserCfg_t macUser0Cfg[];
 		Semaphore_Handle sem;
