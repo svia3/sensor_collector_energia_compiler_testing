@@ -37,9 +37,11 @@ class FifteenDotFourCollector : public FifteenDotFour
         uint16_t getPanID(void) {return panID;};
         void getAddressExt(ApiMac_sAddrExt_t *addr) {memcpy(addr, address.addr.extAddr, sizeof(ApiMac_sAddrExt_t));};
         void setAddressExt(ApiMac_sAddrExt_t *addr) {memcpy(address.addr.extAddr, addr, sizeof(ApiMac_sAddrExt_t));};
+        uint16_t getShortAddress() { return address.addr.shortAddr; };
         void process(void);
         bool beginTransmission(uint16_t address);
-        bool endTransmission();
+        bool endTransmission(uint16_t address);
+        uint16_t getNumAssocDevices() { return numAssocDevices; };
 
         /* API MAC Callbacks */
         static void orphanIndCb(ApiMac_mlmeOrphanInd_t *pData);
@@ -58,7 +60,7 @@ class FifteenDotFourCollector : public FifteenDotFour
         uint8_t channel = 0;
         uint16_t panID = 0x0001;
         /* We assume short address mode */
-        ApiMac_sAddr_t address ={{.shortAddr = 0xAABB}, ApiMac_addrType_short};
+        ApiMac_sAddr_t address ={{.shortAddr = 0xABAB}, ApiMac_addrType_short};
 //        FifteenDotFour* parent = super;
 
         /* ------------------------------- */

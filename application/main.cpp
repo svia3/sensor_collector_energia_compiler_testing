@@ -33,7 +33,7 @@ extern void Board_init(void);
 #define SPANID 0xFFFF
 #define CPANID 0X0001
 
-#define COLLECTOR
+//#define COLLECTOR
 
 #ifdef COLLECTOR
 FifteenDotFourCollector myNode;
@@ -101,14 +101,16 @@ void printCurrentNet() {
 
 void appTaskFxn(UArg a0, UArg a1)
 {
-    uint32_t now;
-    uint32_t then;
+
+    Serial.begin(115200);
+    Serial.println("Starting . . .");
+//
     const char ssid[] = "energia";
     const char password[] = "launchpad";
 
     pinMode(RED_LED, OUTPUT);
     digitalWrite(RED_LED, HIGH);
-    Serial.begin(115200);
+
     // attempt to connect to Wifi network:
     Serial.print("Attempting to connect to Network named: ");
     // print the network name (SSID);
@@ -158,24 +160,55 @@ void appTaskFxn(UArg a0, UArg a1)
     /* Kick off application - Forever loop */
 
     char msg[] = "Hello, World!";
-//        uint32_t now, start;
-    start = Clock_getTicks() * (1000 / Clock_tickPeriod);
+    uint32_t now, start;
+//    start = Clock_getTicks() * (1000 / Clock_tickPeriod);
     while(1)
     {
-#ifdef COLLECTOR
-        myNode.beginTransmission(1);
-        // User does stuff//
-        char msg[] = "Hello, World!";
-//        char msg = 'a';
-        myNode.write((const uint8_t*)msg, strlen(msg));
-        // wrapper for end tranmission so dont flood mac
-        now = Clock_getTicks() * (1000 / Clock_tickPeriod);
-        if((now - start) > 5000) {
-            bool error = myNode.endTransmission();
-            start = Clock_getTicks() * (1000 / Clock_tickPeriod);
-         }
-#endif
+        /*
+         * MAC HANDLING
+         */
         myNode.process();
+
+
+#ifdef COLLECTOR
+        uint16_t sendShortAddr = myNode.getNumAssocDevices();  /* first device connected, same as 0x0001 */
+#else
+        uint16_t sendShortAddr = 0xabab;
+#endif
+
+
+        /*
+         * User does stuff
+         */
+        char msg[] = "Hello, World!";
+
+        /*
+         * Wrapper for the tranmission so we don't flood the MAC
+         */
+        now = millis();
+        if((now - start) > 5000) {
+            myNode.beginTransmission(1);
+            myNode.write((uint8_t *)msg, sizeof(msg));
+            bool error = myNode.endTransmission(sendShortAddr);
+            if(!error)
+            {
+                Serial.println("Failed to send msg");
+            }
+            start = millis();
+        }
+
+        /*
+         * Read/write testing 15.4 API's
+         */
+        uint8_t available = myNode.available();
+        if(available) {
+                char buf[32];
+                myNode.read((uint8_t *)buf, available);
+                /*
+                 * This should print "Hello, World!" in the Serial console
+                 */
+                Serial.println(buf);
+            }
      }
 }
 

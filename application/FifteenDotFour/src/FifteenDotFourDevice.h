@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <ti/sysbios/knl/Semaphore.h>
+#include <software_stack/ti15_4stack/stack_user_api/api_mac/api_mac.h>
 #include <software_stack/ti15_4stack/radio_configuration/mac_user_config.h>
 #include <utils/util_timer.h>
 #include <FifteenDotFour.h>
@@ -59,7 +60,8 @@ class FifteenDotFourDevice : public FifteenDotFour
 		void setCoordShortAddr(uint16_t addr) {coordShortAddr = addr;};
 		uint16_t getCoordShortAddr(void) {return coordShortAddr;};
 		bool beginTransmission(uint16_t address);
-        bool endTransmission();
+        bool endTransmission(uint16_t address);
+
 
         /* ------------------------------------------------- */
         /*     Static Callback Functions for the MAC         */
@@ -95,7 +97,7 @@ class FifteenDotFourDevice : public FifteenDotFour
 		uint16_t states = 0;
 		uint8_t _macTaskId = 0;
 		bool panIdMatch = false;
-		uint16_t coordShortAddr = 0;
+		uint16_t coordShortAddr = 0xabab;
 		bool _connected = false;
 		Clock_Struct pollClkStruct;
 		Clock_Handle pollClkHandle;

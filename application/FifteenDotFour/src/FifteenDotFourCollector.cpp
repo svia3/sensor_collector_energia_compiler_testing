@@ -125,8 +125,8 @@ void FifteenDotFourCollector::begin(void)
     ApiMac_mlmeSetReqUint8(ApiMac_attribute_maxFrameRetries,
                               (uint8_t)CONFIG_MAX_RETRIES);
 
-    ApiMac_mlmeSetReqUint16(ApiMac_attribute_shortAddress,
-                            0xABAB);
+    ApiMac_mlmeSetReqUint16(ApiMac_attribute_shortAddress, getShortAddress());
+
     ApiMac_mlmeSetReqBool(ApiMac_attribute_RxOnWhenIdle,true);
 }
 
@@ -183,19 +183,19 @@ bool FifteenDotFourCollector::beginTransmission(uint16_t address)
     // set the address of the destination node
 //    setAddressExt())
     // clear buffer
-    flush();
+//    flush();
 // creaet tx_buffer and rx_buffer
 //    buffer_init(&tx_buffer);
     return true;
 }
 
-bool FifteenDotFourCollector::endTransmission()
+bool FifteenDotFourCollector::endTransmission(uint16_t address)
 {
-    ApiMac_mcpsDataReq_t dataReq;
-//   memset(&dataReq, 0, sizeof(ApiMac_mcpsDataReq_t));     //memsetting 0 looses static allocate of ptr address
+   ApiMac_mcpsDataReq_t dataReq;
+   memset(&dataReq, 0, sizeof(ApiMac_mcpsDataReq_t));
 
    dataReq.dstAddr.addrMode = ApiMac_addrType_short;
-   dataReq.dstAddr.addr.shortAddr = 0x2000;
+   dataReq.dstAddr.addr.shortAddr = address;      /* hard coded shortAddr of 0x0001 device */
    dataReq.srcAddrMode = ApiMac_addrType_short;
    dataReq.dstPanId = 0xfafa;
    dataReq.msduHandle = 0;
@@ -220,6 +220,7 @@ bool FifteenDotFourCollector::endTransmission()
    // set last error to ApiMac_status
    return status == ApiMac_status_success ? true : false;
 }
+
 
 /* API MAC Callbacks */
 void FifteenDotFourCollector::orphanIndCb(ApiMac_mlmeOrphanInd_t *pData)
@@ -286,6 +287,17 @@ void FifteenDotFourCollector::dataCnfCB(ApiMac_mcpsDataCnf_t *pDataCnf)
 
 void FifteenDotFourCollector::dataIndCB(ApiMac_mcpsDataInd_t *pDataInd)
 {
+    /*
+     * Should be the same logic as the device
+     */
+    if(pDataInd != NULL && pDataInd->msdu.p != NULL && pDataInd->msdu.len > 0)
+    {
+        if(pDataInd->dstPanId == _this->getPanID())
+        {
+
+          buffer_write_multiple(&_this->rx_buffer, pDataInd->msdu.p, (size_t)pDataInd->msdu.len);
+        }
+    }
 }
 
 void FifteenDotFourCollector::beaconNotifyIndCb(ApiMac_mlmeBeaconNotifyInd_t *pData)
