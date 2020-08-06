@@ -84,7 +84,33 @@ bool FifteenDotFourDevice::beginTransmission(uint16_t address)
 
 bool FifteenDotFourDevice::endTransmission(uint16_t address)
 {
+   ApiMac_mcpsDataReq_t dataReq;
+   memset(&dataReq, 0, sizeof(ApiMac_mcpsDataReq_t));
 
+   dataReq.dstAddr.addrMode = ApiMac_addrType_short;
+   dataReq.dstAddr.addr.shortAddr = address;      /* hard coded shortAddr of 0x0001 device */
+   dataReq.srcAddrMode = ApiMac_addrType_short;
+   dataReq.dstPanId = 0xfafa;
+   dataReq.msduHandle = 0;
+   dataReq.txOptions.ack = true;
+   dataReq.txOptions.indirect = false;            /* True if polling device */
+
+   /*-------------------------------------------------------*/
+   /* Buffer Handling */
+   /*-------------------------------------------------------*/
+   uint8_t msgSize = buffer_get_size(&tx_buffer);
+//   memset(dataReq.msdu.p, 0, msgSize);
+   dataReq.msdu.len = msgSize;
+//   dataReq.msdu.p = (uint8_t*)malloc(msgSize);                  // give ptr a valid mem address
+//   memset(dataReq.msdu.p, 0, msgSize);
+//   buffer_read_multiple(dataReq.msdu.p, &tx_buffer, msgSize);
+   dataReq.msdu.p = tx_buffer.buffer;
+   /*-------------------------------------------------------*/
+
+   ApiMac_status_t status = ApiMac_mcpsDataReq(&dataReq);
+
+   // set last error to ApiMac_status
+   return status == ApiMac_status_success ? true : false;
 }
 /*--------------------------------------------------------------------*/
 

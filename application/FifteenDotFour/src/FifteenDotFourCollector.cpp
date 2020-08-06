@@ -5,6 +5,7 @@
 #include <software_stack/ti15_4stack/macTask.h>
 #include <software_stack/ti15_4stack/mac/rom/rom_jt_154.h>
 #include <mac_util.h>
+#include <application/collector/smsgs.h>
 //#include <utils/buffer_c/buffer.h>
 
 extern "C" void assertHandler(void);
@@ -62,7 +63,6 @@ FifteenDotFourCollector::FifteenDotFourCollector(void) : FifteenDotFour(false)
      * to access the class properties in the C callbacks.
      */
     _this = this;
-    this->panID = 0x0001;
     this->numAssocDevices = 0;
     /* Init the association Table */
     for(int i = 0; i < CONFIG_MAX_DEVICES; ++i)
@@ -146,7 +146,7 @@ void FifteenDotFourCollector::process(void)
 
         /* read network parameters fill them in start req */
         startReq.startTime = 0;
-        startReq.panId =  0xFAFA;
+        startReq.panId = panID;       //panID
         startReq.logicalChannel = channel;
         startReq.channelPage = CONFIG_CHANNEL_PAGE;
         startReq.phyID = CONFIG_PHY_ID;
@@ -183,7 +183,7 @@ bool FifteenDotFourCollector::beginTransmission(uint16_t address)
     // set the address of the destination node
 //    setAddressExt())
     // clear buffer
-//    flush();
+    flush();
 // creaet tx_buffer and rx_buffer
 //    buffer_init(&tx_buffer);
     return true;
@@ -197,7 +197,7 @@ bool FifteenDotFourCollector::endTransmission(uint16_t address)
    dataReq.dstAddr.addrMode = ApiMac_addrType_short;
    dataReq.dstAddr.addr.shortAddr = address;      /* hard coded shortAddr of 0x0001 device */
    dataReq.srcAddrMode = ApiMac_addrType_short;
-   dataReq.dstPanId = 0xfafa;
+   dataReq.dstPanId = panID;
    dataReq.msduHandle = 0;
    dataReq.txOptions.ack = true;
    dataReq.txOptions.indirect = true;
@@ -287,9 +287,6 @@ void FifteenDotFourCollector::dataCnfCB(ApiMac_mcpsDataCnf_t *pDataCnf)
 
 void FifteenDotFourCollector::dataIndCB(ApiMac_mcpsDataInd_t *pDataInd)
 {
-    /*
-     * Should be the same logic as the device
-     */
     if(pDataInd != NULL && pDataInd->msdu.p != NULL && pDataInd->msdu.len > 0)
     {
         if(pDataInd->dstPanId == _this->getPanID())
@@ -381,6 +378,23 @@ void FifteenDotFourCollector::createShortAddress(associationDevice_t *newDevice)
 //            assocRsp.status = ApiMac_assocStatus_panAccessDenied; // could run out of addresses
     newDevice->shortAddress = this->numAssocDevices + ASSOC_DEVICE_STARTING_SHORT_ADDR;
 }
+
+///*
+// * Process the sensor data in the dataIndCB
+// */
+//void FifteenDotFourCollector::processSensorData(ApiMac_mcpsDataInd_t *pDataInd)
+//{
+//    /*
+//     * Internal copy and bookkeeping?
+//     */
+//    Smsgs_sensorMsg_t sensorData;
+//    memset(&sensorData, 0, sizeof(Smsgs_sensorMsg_t));
 //
-//
+//    /*
+//     * Write to our tx_buffer to pass data up to application layer
+//     */
+//    buffer_write_multiple(&_this->rx_buffer, pDataInd->msdu.p, (size_t)pDataInd->msdu.len);
+//}
+
+
 

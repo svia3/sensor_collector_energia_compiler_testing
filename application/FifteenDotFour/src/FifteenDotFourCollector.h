@@ -42,6 +42,7 @@ class FifteenDotFourCollector : public FifteenDotFour
         bool beginTransmission(uint16_t address);
         bool endTransmission(uint16_t address);
         uint16_t getNumAssocDevices() { return numAssocDevices; };
+        void processSensorData(ApiMac_mcpsDataInd_t *pDataInd);
 
         /* API MAC Callbacks */
         static void orphanIndCb(ApiMac_mlmeOrphanInd_t *pData);
@@ -58,7 +59,7 @@ class FifteenDotFourCollector : public FifteenDotFour
         uint16_t revents = 0;
     private:
         uint8_t channel = 0;
-        uint16_t panID = 0x0001;
+        uint16_t panID;
         /* We assume short address mode */
         ApiMac_sAddr_t address ={{.shortAddr = 0xABAB}, ApiMac_addrType_short};
 //        FifteenDotFour* parent = super;

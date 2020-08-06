@@ -53,5 +53,5 @@ int FifteenDotFour::peek(void)
 void FifteenDotFour::flush(void)
 {
     buffer_flush(&tx_buffer);
-    buffer_flush(&rx_buffer);   /* flush the tx_buffer too? */
+//    buffer_flush(&rx_buffer);   /* flush the tx_buffer too? */
 }
