@@ -3,8 +3,9 @@
 #include <advanced_config.h>
 #include <FifteenDotFourDevice.h>
 #include <xdc/runtime/System.h>
-#include <software_stack/ti15_4stack/stack_user_api/api_mac/api_mac.h>
 #include "ti_154stack_config.h"
+#include <mac_util.h>
+
 
 #define DEFAULT_KEY_SOURCE {0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33}
 
@@ -70,12 +71,46 @@ FifteenDotFourDevice::FifteenDotFourDevice() : FifteenDotFour(true)
 /* These methods should be aggregated into FifteenDotFour parent class once
  * we figure out what can be consolidated
  */
-bool FifteenDotFourDevice::beginTransmission(uint16_t address) {
-    return false;
+bool FifteenDotFourDevice::beginTransmission(uint16_t address)
+{
+    // set the address of the destination node
+//    setAddressExt())
+    // clear buffer
+    flush();
+// creaet tx_buffer and rx_buffer
+//    buffer_init(&tx_buffer);
+    return true;
 }
 
-bool FifteenDotFourDevice::endTransmission() {
-    return false;
+bool FifteenDotFourDevice::endTransmission(uint16_t address)
+{
+   ApiMac_mcpsDataReq_t dataReq;
+   memset(&dataReq, 0, sizeof(ApiMac_mcpsDataReq_t));
+
+   dataReq.dstAddr.addrMode = ApiMac_addrType_short;
+   dataReq.dstAddr.addr.shortAddr = address;      /* hard coded shortAddr of 0x0001 device */
+   dataReq.srcAddrMode = ApiMac_addrType_short;
+   dataReq.dstPanId = 0xfafa;
+   dataReq.msduHandle = 0;
+   dataReq.txOptions.ack = true;
+   dataReq.txOptions.indirect = false;            /* True if polling device */
+
+   /*-------------------------------------------------------*/
+   /* Buffer Handling */
+   /*-------------------------------------------------------*/
+   uint8_t msgSize = buffer_get_size(&tx_buffer);
+//   memset(dataReq.msdu.p, 0, msgSize);
+   dataReq.msdu.len = msgSize;
+//   dataReq.msdu.p = (uint8_t*)malloc(msgSize);                  // give ptr a valid mem address
+//   memset(dataReq.msdu.p, 0, msgSize);
+//   buffer_read_multiple(dataReq.msdu.p, &tx_buffer, msgSize);
+   dataReq.msdu.p = tx_buffer.buffer;
+   /*-------------------------------------------------------*/
+
+   ApiMac_status_t status = ApiMac_mcpsDataReq(&dataReq);
+
+   // set last error to ApiMac_status
+   return status == ApiMac_status_success ? true : false;
 }
 /*--------------------------------------------------------------------*/
 
@@ -257,7 +292,7 @@ void FifteenDotFourDevice::dataIndCB(ApiMac_mcpsDataInd_t *pDataInd)
         if(pDataInd->dstPanId == _this->getPanID())
         {
 
-          buffer_write_multiple(&(_this->rx_buffer), pDataInd->msdu.p, (size_t)pDataInd->msdu.len);
+          buffer_write_multiple(&_this->rx_buffer, pDataInd->msdu.p, (size_t)pDataInd->msdu.len);
         }
     }
 }

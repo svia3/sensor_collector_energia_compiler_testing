@@ -5,6 +5,7 @@
 #include <software_stack/ti15_4stack/macTask.h>
 #include <software_stack/ti15_4stack/mac/rom/rom_jt_154.h>
 #include <mac_util.h>
+#include <application/collector/smsgs.h>
 //#include <utils/buffer_c/buffer.h>
 
 extern "C" void assertHandler(void);
@@ -62,7 +63,6 @@ FifteenDotFourCollector::FifteenDotFourCollector(void) : FifteenDotFour(false)
      * to access the class properties in the C callbacks.
      */
     _this = this;
-    this->panID = 0x0001;
     this->numAssocDevices = 0;
     /* Init the association Table */
     for(int i = 0; i < CONFIG_MAX_DEVICES; ++i)
@@ -125,8 +125,8 @@ void FifteenDotFourCollector::begin(void)
     ApiMac_mlmeSetReqUint8(ApiMac_attribute_maxFrameRetries,
                               (uint8_t)CONFIG_MAX_RETRIES);
 
-    ApiMac_mlmeSetReqUint16(ApiMac_attribute_shortAddress,
-                            0xABAB);
+    ApiMac_mlmeSetReqUint16(ApiMac_attribute_shortAddress, getShortAddress());
+
     ApiMac_mlmeSetReqBool(ApiMac_attribute_RxOnWhenIdle,true);
 }
 
@@ -146,7 +146,7 @@ void FifteenDotFourCollector::process(void)
 
         /* read network parameters fill them in start req */
         startReq.startTime = 0;
-        startReq.panId =  0xFAFA;
+        startReq.panId = panID;       //panID
         startReq.logicalChannel = channel;
         startReq.channelPage = CONFIG_CHANNEL_PAGE;
         startReq.phyID = CONFIG_PHY_ID;
@@ -189,15 +189,15 @@ bool FifteenDotFourCollector::beginTransmission(uint16_t address)
     return true;
 }
 
-bool FifteenDotFourCollector::endTransmission()
+bool FifteenDotFourCollector::endTransmission(uint16_t address)
 {
-    ApiMac_mcpsDataReq_t dataReq;
-//   memset(&dataReq, 0, sizeof(ApiMac_mcpsDataReq_t));     //memsetting 0 looses static allocate of ptr address
+   ApiMac_mcpsDataReq_t dataReq;
+   memset(&dataReq, 0, sizeof(ApiMac_mcpsDataReq_t));
 
    dataReq.dstAddr.addrMode = ApiMac_addrType_short;
-   dataReq.dstAddr.addr.shortAddr = 0x2000;
+   dataReq.dstAddr.addr.shortAddr = address;      /* hard coded shortAddr of 0x0001 device */
    dataReq.srcAddrMode = ApiMac_addrType_short;
-   dataReq.dstPanId = 0xfafa;
+   dataReq.dstPanId = panID;
    dataReq.msduHandle = 0;
    dataReq.txOptions.ack = true;
    dataReq.txOptions.indirect = true;
@@ -221,6 +221,7 @@ bool FifteenDotFourCollector::endTransmission()
    return status == ApiMac_status_success ? true : false;
 }
 
+
 /* API MAC Callbacks */
 void FifteenDotFourCollector::orphanIndCb(ApiMac_mlmeOrphanInd_t *pData)
 {
@@ -229,41 +230,22 @@ void FifteenDotFourCollector::orphanIndCb(ApiMac_mlmeOrphanInd_t *pData)
 
 void FifteenDotFourCollector::assocIndCb(ApiMac_mlmeAssociateInd_t *pData)
 {
-
-//    ApiMac_mlmeAssociateRsp_t assocRsp;
-//    ApiMac_deviceDescriptor_t devInfo;
-//
-//    memset(&devInfo, 0, sizeof(ApiMac_deviceDescriptor_t));
-//
-//    /* No security. Set to all 0's */
-//    memset(&assocRsp.sec, 0, sizeof(ApiMac_sec_t));
-//    assocRsp.status = ApiMac_assocStatus_success;
-//
-//    devInfo.shortAddress = 0x0002;
-//    memcpy(&devInfo.extAddress, &pData->deviceAddress, 8);
-//
-//    memcpy(&assocRsp.deviceAddress, &devInfo.extAddress, 8);
-//    assocRsp.assocShortAddress = devInfo.shortAddress;
-//
-//    /* Send out the associate response */
-//    ApiMac_mlmeAssociateRsp(&assocRsp);
 /*--------------------------------------------------------------*/
     ApiMac_mlmeAssociateRsp_t assocRsp;
+    associationDevice_t device;
 
-    // find short address -> create an API call for this
-    associationDevice_t device; // = (associationDevice_t*)malloc(sizeof(associationDevice_t));
-//    memset(device, 0, sizeof(associationDevice_t));
+    /* Search for the device, if you cannot find it, add it for cache lookup */
     if (!(_this->findDevice(&device, &pData->deviceAddress))) {
         /* Add to association table */
         if (_this->addDevice(&device, pData)) {     // null ptr?
             /* Successfully added to table, pass this info onto MAC */
-//            assocRsp.status = ApiMac_assocStatus_success;
             /* Increment connected devices */
             _this->numAssocDevices++;
         } else {
             assocRsp.status = ApiMac_assocStatus_panAccessDenied;
         }
     }
+
     /* Successfully added or found */
     assocRsp.status = ApiMac_assocStatus_success;
 //    devInfo.shortAddress = 0x0002;
@@ -305,6 +287,14 @@ void FifteenDotFourCollector::dataCnfCB(ApiMac_mcpsDataCnf_t *pDataCnf)
 
 void FifteenDotFourCollector::dataIndCB(ApiMac_mcpsDataInd_t *pDataInd)
 {
+    if(pDataInd != NULL && pDataInd->msdu.p != NULL && pDataInd->msdu.len > 0)
+    {
+        if(pDataInd->dstPanId == _this->getPanID())
+        {
+
+          buffer_write_multiple(&_this->rx_buffer, pDataInd->msdu.p, (size_t)pDataInd->msdu.len);
+        }
+    }
 }
 
 void FifteenDotFourCollector::beaconNotifyIndCb(ApiMac_mlmeBeaconNotifyInd_t *pData)
@@ -388,6 +378,23 @@ void FifteenDotFourCollector::createShortAddress(associationDevice_t *newDevice)
 //            assocRsp.status = ApiMac_assocStatus_panAccessDenied; // could run out of addresses
     newDevice->shortAddress = this->numAssocDevices + ASSOC_DEVICE_STARTING_SHORT_ADDR;
 }
+
+///*
+// * Process the sensor data in the dataIndCB
+// */
+//void FifteenDotFourCollector::processSensorData(ApiMac_mcpsDataInd_t *pDataInd)
+//{
+//    /*
+//     * Internal copy and bookkeeping?
+//     */
+//    Smsgs_sensorMsg_t sensorData;
+//    memset(&sensorData, 0, sizeof(Smsgs_sensorMsg_t));
 //
-//
+//    /*
+//     * Write to our tx_buffer to pass data up to application layer
+//     */
+//    buffer_write_multiple(&_this->rx_buffer, pDataInd->msdu.p, (size_t)pDataInd->msdu.len);
+//}
+
+
 

@@ -447,6 +447,8 @@ NVSSPI25X_HWAttrs nvsSPI25XHWAttrs[1] = {
     },
 };
 
+
+
 const NVS_Config NVS_config[] = {
     /* Region 0 is internal flash */
     {
@@ -463,6 +465,22 @@ const NVS_Config NVS_config[] = {
 };
 
 int NVS_count = 2;
+
+/*
+ *  =============================== RF Driver ===============================
+ */
+
+#include <ti/drivers/rf/RF.h>
+
+const RFCC26XX_HWAttrsV2 RFCC26XX_hwAttrs = {
+    .hwiPriority        = (~0),
+    .swiPriority        = (uint8_t)0,
+    .xoscHfAlwaysNeeded = true,
+    .globalCallback     = NULL,
+    .globalEventMask    = 0
+};
+
+
 
 /*
  *  =============================== PIN ===============================
