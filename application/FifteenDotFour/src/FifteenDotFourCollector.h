@@ -8,6 +8,7 @@
 #include <FifteenDotFour.h>
 #include <application/collector/advanced_config.h>
 
+#define EXTADDR_OFFSET 0x2F0
 #define MIN_PERSISTENCE_TIME_USEC 2000000
 #define INDIRECT_PERSISTENT_TIME (MAX((5 * 1000 * CONFIG_POLLING_INTERVAL / 2), MIN_PERSISTENCE_TIME_USEC)/ \
                                   (BASE_SUPER_FRAME_DURATION * \
@@ -17,8 +18,10 @@
 #define CLLC_EBEACONORDER        15
 #define CLLC_NBPANEBEACONORDER   16383
 
+
 #define START_EVENT (1 << 0)
 #define OPEN_EVENT (1 << 1)
+
 
 /*
  *     memset(Cllc_associatedDevList, 0xFF,
@@ -80,4 +83,7 @@ class FifteenDotFourCollector : public FifteenDotFour
     protected:
         Semaphore_Handle sem;
 };
+
+FifteenDotFourCollector *_this;
+
 #endif

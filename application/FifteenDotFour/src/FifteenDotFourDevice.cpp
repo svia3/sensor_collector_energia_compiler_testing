@@ -9,7 +9,6 @@
 
 #define DEFAULT_KEY_SOURCE {0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33}
 
-FifteenDotFourDevice *_this;
 extern "C" ApiMac_sAddrExt_t ApiMac_extAddr;
 static uint8_t defaultChannelMask[APIMAC_154G_CHANNEL_BITMAP_SIZ] = CONFIG_CHANNEL_MASK;
 

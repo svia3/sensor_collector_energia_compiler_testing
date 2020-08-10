@@ -109,4 +109,6 @@ class FifteenDotFourDevice : public FifteenDotFour
 		Semaphore_Handle sem;
 };
 
+FifteenDotFourDevice *_this;
+
 #endif

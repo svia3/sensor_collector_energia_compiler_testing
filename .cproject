@@ -190,8 +190,9 @@
 						<toolChain id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.ReleaseToolchain.427274192" name="TI Build Tools" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.ReleaseToolchain" unusedChildren="">
 							<option id="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS.623825823.1680486587" superClass="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS.623825823"/>
 							<option id="com.ti.ccstudio.buildDefinitions.core.OPT_CODEGEN_VERSION.10862059.1218437078" name="Compiler version" superClass="com.ti.ccstudio.buildDefinitions.core.OPT_CODEGEN_VERSION.10862059"/>
+							<targetPlatform id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.targetPlatformRelease" name="Platform" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.targetPlatformRelease"/>
 							<tool id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.compilerRelease.1864475256" name="ARM Compiler" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.compilerRelease.1218294222">
-								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compilerID.DEFINE.599352724" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compilerID.DEFINE" valueType="definedSymbols">
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compilerID.DEFINE.599352724" name="Pre-define NAME (--define, -D)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compilerID.DEFINE" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="${COM_TI_SIMPLELINK_CC13X2_26X2_SDK_SYMBOLS}"/>
 									<listOptionValue builtIn="false" value="xdc__nolocalstring=1"/>
 									<listOptionValue builtIn="false" value="TIMAC_ROM_IMAGE_BUILD"/>
@@ -209,6 +210,21 @@
 							<tool id="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.1886773120" name="XDCtools" superClass="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.50673168"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="com.ti.ccstudio.buildDefinitions.TMS470.Release.4940151.1255180802" name="sensor.cpp" rcbsApplicability="disable" resourcePath="application/sensor/sensor.cpp" toolsToInvoke="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.compilerRelease.1218294222.75735762">
+						<tool id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.compilerRelease.1218294222.75735762" name="ARM Compiler" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.compilerRelease.1218294222">
+							<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compilerID.DEFINE.1514195734" name="Pre-define NAME (--define, -D)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compilerID.DEFINE" valueType="definedSymbols">
+								<listOptionValue builtIn="false" value="xdc__nolocalstring=1"/>
+								<listOptionValue builtIn="false" value="${COM_TI_SIMPLELINK_CC13X2_26X2_SDK_SYMBOLS}"/>
+								<listOptionValue builtIn="false" value="TIMAC_ROM_IMAGE_BUILD"/>
+								<listOptionValue builtIn="false" value="Board_EXCLUDE_NVS_EXTERNAL_FLASH"/>
+								<listOptionValue builtIn="false" value="DeviceFamily_CC13X2"/>
+							</option>
+							<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__C_SRCS.922957753" name="C Sources" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__C_SRCS"/>
+							<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__CPP_SRCS.213805208" name="C++ Sources" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__CPP_SRCS"/>
+							<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__ASM_SRCS.590063383" name="Assembly Sources" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__ASM_SRCS"/>
+							<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__ASM2_SRCS.488039351" name="Assembly Sources" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__ASM2_SRCS"/>
+						</tool>
+					</fileInfo>
 					<folderInfo id="com.ti.ccstudio.buildDefinitions.TMS470.Release.4940151.1461576240" name="/" resourcePath="application/Adafruit_MQTT">
 						<toolChain id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.ReleaseToolchain.918762172" name="TI Build Tools" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.ReleaseToolchain" unusedChildren="">
 							<option id="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS.623825823.360265936" superClass="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS.623825823"/>
@@ -324,10 +340,25 @@
 							<tool id="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.475755312" name="XDCtools" superClass="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.50673168"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="com.ti.ccstudio.buildDefinitions.TMS470.Release.4940151.1758692172" name="collector.cpp" rcbsApplicability="disable" resourcePath="application/collector/collector.cpp" toolsToInvoke="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.compilerRelease.1218294222.1949104865">
+						<tool id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.compilerRelease.1218294222.1949104865" name="ARM Compiler" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.exe.compilerRelease.1218294222">
+							<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compilerID.DEFINE.512468964" name="Pre-define NAME (--define, -D)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compilerID.DEFINE" valueType="definedSymbols">
+								<listOptionValue builtIn="false" value="${COM_TI_SIMPLELINK_CC13X2_26X2_SDK_SYMBOLS}"/>
+								<listOptionValue builtIn="false" value="xdc__nolocalstring=1"/>
+								<listOptionValue builtIn="false" value="TIMAC_ROM_IMAGE_BUILD"/>
+								<listOptionValue builtIn="false" value="Board_EXCLUDE_NVS_EXTERNAL_FLASH"/>
+								<listOptionValue builtIn="false" value="DeviceFamily_CC13X2"/>
+							</option>
+							<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__C_SRCS.354606348" name="C Sources" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__C_SRCS"/>
+							<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__CPP_SRCS.1008349553" name="C++ Sources" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__CPP_SRCS"/>
+							<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__ASM_SRCS.1453389885" name="Assembly Sources" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__ASM_SRCS"/>
+							<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__ASM2_SRCS.1056448585" name="Assembly Sources" superClass="com.ti.ccstudio.buildDefinitions.TMS470_20.2.compiler.inputType__ASM2_SRCS"/>
+						</tool>
+					</fileInfo>
 					<sourceEntries>
-						<entry excluding="application/FifteenDotFour/src/ti_drivers_config.c|collector.syscfg|application/Energia|application/Energia/variants/LPSTK_CC1352R|application/Energia/variants/CC26X2R1_LAUNCHXL|application/Energia/variants/CC1352R1_LAUNCHXL|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="application/Energia/cores"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="application/Energia/variants/CC1312R1_LAUNCHXL"/>
+						<entry excluding="application/sensor/sensor.cpp|application/FifteenDotFour/src/ti_drivers_config.c|collector.syscfg|application/Energia|application/Energia/variants/LPSTK_CC1352R|application/Energia/variants/CC26X2R1_LAUNCHXL|application/Energia/variants/CC1352R1_LAUNCHXL|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

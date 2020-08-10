@@ -5,7 +5,6 @@
 #include <software_stack/ti15_4stack/macTask.h>
 #include <software_stack/ti15_4stack/mac/rom/rom_jt_154.h>
 #include <mac_util.h>
-#include <application/collector/smsgs.h>
 //#include <utils/buffer_c/buffer.h>
 
 extern "C" void assertHandler(void);
@@ -52,8 +51,6 @@ ApiMac_callbacks_t Collector_macCallbacks =
       NULL
     };
 }
-
-FifteenDotFourCollector *_this;
 
 FifteenDotFourCollector::FifteenDotFourCollector(void) : FifteenDotFour(false)
 {
